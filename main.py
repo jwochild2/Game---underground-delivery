@@ -20,7 +20,15 @@ def draw(game):
 
 def main():
     game = Game(Random())
-    draw(game)
+    while True:
+        draw(game)
+        command = input("WASD + Enter — ход, R — новая игра, Q — выход: ").lower()
+        if command == "q":
+            break
+        if command == "r":
+            game = Game(Random())
+        else:
+            game.move(command)
 
 
 if __name__ == "__main__":
