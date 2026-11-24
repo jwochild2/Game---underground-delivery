@@ -2,7 +2,7 @@ from level import DIRECTIONS, generate_level
 
 
 class Game:
-    """Хранит номер этажа, очки и положение курьера."""
+    """Хранит номер этажа, очки и положение курьера"""
 
     def __init__(self, rng):
         self.rng = rng
@@ -15,7 +15,7 @@ class Game:
         self.position = self.level.entrance
         self.energy = self.level.energy
         self.status = "playing"
-        self.message = "Доставьте все посылки и вернитесь к лифту."
+        self.message = "Доставьте все посылки и вернитесь к лифту"
 
     def move(self, command):
         if self.status != "playing" or command not in DIRECTIONS:
@@ -26,7 +26,7 @@ class Game:
         x, y = self.position
         destination = (x + dx, y + dy)
         if not self.level.walkable(destination):
-            self.message = "Путь перекрыт."
+            self.message = "Путь перекрыт"
             return
 
         self.position = destination
@@ -34,7 +34,7 @@ class Game:
         self.energy = max(0, self.energy - 1)
         if self.energy == 0:
             self.status = "lost"
-            self.message = "Энергия закончилась."
+            self.message = "Энергия закончилась"
             return
 
         if destination in self.level.deliveries:
@@ -49,4 +49,4 @@ class Game:
             completed_floor = self.floor
             self.floor += 1
             self.start_floor()
-            self.message = f"Этаж {completed_floor} пройден. Новая карта готова."
+            self.message = f"Этаж {completed_floor} пройден. Новая карта готова"
