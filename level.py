@@ -39,4 +39,9 @@ class Level:
 
 
 def generate_level(number, rng):
-    return Level()
+    level = Level()
+    level.walls.update({(5, 2), (5, 3), (5, 4)})
+    level.deliveries = {(3, 1): 10, (7, 3): 25}
+    level.traps = {(4, 1), (3, 4)}
+    level.batteries = {(2, 3), (8, 4)}
+    return level
