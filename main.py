@@ -1,3 +1,5 @@
+"""Запуск игры в терминале, чтение клавиш и отображение карты."""
+
 import os
 from random import Random
 import sys

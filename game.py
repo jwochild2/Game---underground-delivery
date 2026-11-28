@@ -1,3 +1,5 @@
+"""Правила игры: движение, энергия, доставки, очки и ускорение."""
+
 from functools import wraps
 from level import DIRECTIONS, generate_level
 
