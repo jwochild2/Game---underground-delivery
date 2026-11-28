@@ -66,16 +66,64 @@ class Game:
         self.position = self.level.entrance
         self.energy = self.level.energy
         self.status = "playing"
-        self.message = "Это первый этаж игры."
+        self.fast_moves = 0
+        self.message = "Доставьте все посылки и вернитесь к лифту."
 
     def move(self, command):
-        if command not in DIRECTIONS:
+        if self.status != "playing" or command not in DIRECTIONS:
             return
-        x, y = self.position
+        steps = 1
+        if self.fast_moves > 0:
+            steps = 2
+        old_floor = self.floor
+        for _ in range(steps):
+            self.step(command)
+            if self.status != "playing" or self.floor != old_floor:
+                break
+        if self.fast_moves > 0:
+            self.fast_moves -= 1
+
+    @count_moves
+    def step(self, command):
+        if self.status != "playing" or command not in DIRECTIONS:
+            return
+
+        # Сначала проверяем клетку. Стена не тратит энергию.
         dx, dy = DIRECTIONS[command]
+        x, y = self.position
         destination = (x + dx, y + dy)
-        if self.level.walkable(destination):
-            self.position = destination
-            self.message = ""
-        else:
+        if not self.level.walkable(destination):
             self.message = "Путь перекрыт."
+            return
+
+        self.position = destination
+        self.message = ""
+        cost = 1
+        if destination in self.level.traps:
+            cost = 5
+            self.message = "Ловушка! Потрачено 5 энергии."
+        self.energy = max(0, self.energy - cost)
+        if self.energy == 0:
+            self.status = "lost"
+            self.message = "Энергия закончилась."
+            return
+
+        # После шага отмечаем использованную батарейку или доставку.
+        if destination in self.level.batteries:
+            self.level.batteries.remove(destination)
+            restored = self.restore_energy(self)
+            self.message = f"Батарейка восстановила {restored} энергии."
+
+        if destination in self.level.deliveries:
+            reward = self.level.deliveries[destination]
+            del self.level.deliveries[destination]
+            self.score += reward
+            self.message = f"Посылка доставлена. +{reward} очков."
+            if not self.level.deliveries:
+                self.message += " Возвращайтесь к лифту."
+
+        if destination == self.level.entrance and not self.level.deliveries:
+            completed_floor = self.floor
+            self.floor += 1
+            self.start_floor()
+            self.message = f"Этаж {completed_floor} пройден. Новая карта готова."
