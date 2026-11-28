@@ -73,22 +73,13 @@ def main():
     game = Game(Random())
     while True:
         draw(game)
-        key = game_key(read_key())
-        if not key:
-            if not sys.stdin.isatty():
-                return
-            continue
-        if key == "q":
-            return
-        if game.status == "lost" and key == "r":
+        command = input("WASD + Enter — ход, R — новая игра, Q — выход: ").lower()
+        if command == "q":
+            break
+        if command == "r":
             game = Game(Random())
-        elif key == "b":
-            try:
-                game.buy_speed()
-            except GameError as error:
-                game.message = str(error)
         else:
-            game.move(key)
+            game.move(command)
 
 
 if __name__ == "__main__":
